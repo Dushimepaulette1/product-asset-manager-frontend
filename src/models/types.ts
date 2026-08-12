@@ -31,6 +31,14 @@ export function getStockStatus(stockQuantity: number): StockStatus {
   return 'IN_STOCK'
 }
 
+export interface VariantWithStockStatus extends Variant {
+  stockStatus: StockStatus
+}
+
+export interface ProductDetail extends Product {
+  variants: VariantWithStockStatus[]
+}
+
 export type UserRole = 'USER' | 'ADMIN'
 
 export interface User {
