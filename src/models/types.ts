@@ -35,6 +35,12 @@ export interface VariantWithStockStatus extends Variant {
   stockStatus: StockStatus
 }
 
+export const stockStatusLabels: Record<StockStatus, string> = {
+  IN_STOCK: 'In Stock',
+  LOW_STOCK: 'Low Stock',
+  OUT_OF_STOCK: 'Out of Stock',
+}
+
 export interface ProductDetail extends Product {
   variants: VariantWithStockStatus[]
 }
