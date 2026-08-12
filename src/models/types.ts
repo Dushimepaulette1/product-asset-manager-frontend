@@ -48,3 +48,15 @@ export interface User {
   password: string
   role: UserRole
 }
+
+export interface AuthUser {
+  email: string
+  role: UserRole
+}
+
+export interface AuthTokenPayload {
+  sub: string
+  email: string
+  role: UserRole
+  exp: number
+}

@@ -1,11 +1,5 @@
 import { createContext } from 'react'
-
-export type UserRole = 'USER' | 'ADMIN'
-
-export interface AuthUser {
-  email: string
-  role: UserRole
-}
+import type { AuthUser } from '../models/types.ts'
 
 export interface AuthContextValue {
   user: AuthUser | null
