@@ -59,4 +59,12 @@ export const authService = {
       return undefined
     }
   },
+
+  logout(): void {
+    localStorage.removeItem(STORAGE_KEY)
+  },
+
+  getStoredToken(): string | null {
+    return localStorage.getItem(STORAGE_KEY)
+  },
 }
