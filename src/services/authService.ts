@@ -9,8 +9,28 @@ function encodeToken(payload: AuthTokenPayload): string {
   return `mock.${body}.signature`
 }
 
+function decodeToken(token: string): AuthTokenPayload | undefined {
+  const parts = token.split('.')
+  if (parts.length !== 3) return undefined
+
+  try {
+    return JSON.parse(atob(parts[1])) as AuthTokenPayload
+  } catch {
+    return undefined
+  }
+}
+
 function persistToken(token: string) {
   localStorage.setItem(STORAGE_KEY, token)
+}
+
+function toAuthUser(payload: AuthTokenPayload): AuthUser {
+  const matchedUser = mockUsers.find((u) => u.id === payload.sub)
+  return {
+    name: matchedUser?.name ?? payload.email,
+    email: payload.email,
+    role: payload.role,
+  }
 }
 
 interface LoginOptions {
@@ -45,20 +65,10 @@ export const authService = {
     const token = encodeToken(payload)
     persistToken(token)
 
-    const user: AuthUser = { email: matchedUser.email, role: matchedUser.role }
-    return resolveAfterDelay({ token, user })
+    return resolveAfterDelay({ token, user: toAuthUser(payload) })
   },
 
-  decodeToken(token: string): AuthTokenPayload | undefined {
-    const parts = token.split('.')
-    if (parts.length !== 3) return undefined
-
-    try {
-      return JSON.parse(atob(parts[1])) as AuthTokenPayload
-    } catch {
-      return undefined
-    }
-  },
+  decodeToken,
 
   logout(): void {
     localStorage.removeItem(STORAGE_KEY)
@@ -66,5 +76,18 @@ export const authService = {
 
   getStoredToken(): string | null {
     return localStorage.getItem(STORAGE_KEY)
+  },
+
+  getCurrentUser(): AuthUser | undefined {
+    const token = localStorage.getItem(STORAGE_KEY)
+    if (!token) return undefined
+
+    const payload = decodeToken(token)
+    if (!payload || payload.exp * 1000 <= Date.now()) {
+      localStorage.removeItem(STORAGE_KEY)
+      return undefined
+    }
+
+    return toAuthUser(payload)
   },
 }

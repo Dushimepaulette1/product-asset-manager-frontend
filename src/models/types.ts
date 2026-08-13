@@ -56,6 +56,7 @@ export interface User {
 }
 
 export interface AuthUser {
+  name: string
   email: string
   role: UserRole
 }
