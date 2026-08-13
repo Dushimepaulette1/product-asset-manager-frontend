@@ -45,6 +45,10 @@ export interface ProductDetail extends Product {
   variants: VariantWithStockStatus[]
 }
 
+export interface ProductWithStartingPrice extends Product {
+  startingPrice: number | undefined
+}
+
 export type UserRole = 'USER' | 'ADMIN'
 
 export interface User {

@@ -1,6 +1,6 @@
 import { mockProducts } from '../mocks/mockProducts.ts'
 import { mockVariants } from '../mocks/mockVariants.ts'
-import type { Product, ProductDetail } from '../models/types.ts'
+import type { Product, ProductDetail, ProductWithStartingPrice } from '../models/types.ts'
 import { getStockStatus } from '../models/types.ts'
 import { resolveAfterDelay, rejectAfterDelay } from './mockApi.ts'
 
@@ -19,21 +19,23 @@ function lowestActiveVariantPrice(productId: string): number | undefined {
 }
 
 export const productService = {
-  find(params: ProductFindParams = {}): Promise<Product[]> {
+  find(params: ProductFindParams = {}): Promise<ProductWithStartingPrice[]> {
     if (params.simulateError) {
       return rejectAfterDelay('Failed to load products')
     }
 
     const keyword = params.keyword?.trim().toLowerCase()
 
-    const results = mockProducts.filter((product) => {
-      const matchesKeyword = keyword ? product.name.toLowerCase().includes(keyword) : true
-      if (!matchesKeyword) return false
+    const results = mockProducts
+      .filter((product) => {
+        const matchesKeyword = keyword ? product.name.toLowerCase().includes(keyword) : true
+        if (!matchesKeyword) return false
 
-      if (params.maxPrice === undefined) return true
-      const lowestPrice = lowestActiveVariantPrice(product.id)
-      return lowestPrice !== undefined && lowestPrice <= params.maxPrice
-    })
+        if (params.maxPrice === undefined) return true
+        const lowestPrice = lowestActiveVariantPrice(product.id)
+        return lowestPrice !== undefined && lowestPrice <= params.maxPrice
+      })
+      .map((product) => ({ ...product, startingPrice: lowestActiveVariantPrice(product.id) }))
 
     return resolveAfterDelay(results)
   },
