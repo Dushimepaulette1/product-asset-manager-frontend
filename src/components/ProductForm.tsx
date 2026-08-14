@@ -25,9 +25,17 @@ interface ProductFormProps {
   onSubmit: (values: ProductFormValues) => void
   errors?: ProductFormErrors
   submitLabel?: string
+  submitting?: boolean
 }
 
-function ProductForm({ values, onChange, onSubmit, errors, submitLabel = 'Save' }: ProductFormProps) {
+function ProductForm({
+  values,
+  onChange,
+  onSubmit,
+  errors,
+  submitLabel = 'Save',
+  submitting = false,
+}: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
@@ -63,7 +71,9 @@ function ProductForm({ values, onChange, onSubmit, errors, submitLabel = 'Save' 
         error={errors?.categoryId}
       />
 
-      <Button type="submit">{submitLabel}</Button>
+      <Button type="submit" loading={submitting}>
+        {submitLabel}
+      </Button>
     </form>
   )
 }
