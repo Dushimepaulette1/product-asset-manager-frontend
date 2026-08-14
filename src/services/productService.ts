@@ -40,7 +40,11 @@ export const productService = {
     return resolveAfterDelay(results)
   },
 
-  findById(id: string): Promise<ProductDetail | undefined> {
+  findById(id: string, options: { simulateError?: boolean } = {}): Promise<ProductDetail | undefined> {
+    if (options.simulateError) {
+      return rejectAfterDelay('Failed to load product')
+    }
+
     const product = mockProducts.find((p) => p.id === id)
     if (!product) return resolveAfterDelay(undefined)
 

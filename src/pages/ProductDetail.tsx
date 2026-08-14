@@ -1,12 +1,70 @@
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { productService } from '../services/productService.ts'
+import type { ProductDetail as ProductDetailData } from '../models/types.ts'
+import LoadingState from '../components/LoadingState.tsx'
+import EmptyState from '../components/EmptyState.tsx'
+import ErrorState from '../components/ErrorState.tsx'
+
+type Status = 'loading' | 'found' | 'not-found' | 'error'
 
 function ProductDetail() {
   const { productId } = useParams()
+  const [product, setProduct] = useState<ProductDetailData | undefined>(undefined)
+  const [status, setStatus] = useState<Status>('loading')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const fetchProduct = useCallback(() => {
+    if (!productId) return
+
+    productService
+      .findById(productId)
+      .then((result) => {
+        if (result) {
+          setProduct(result)
+          setStatus('found')
+        } else {
+          setStatus('not-found')
+        }
+      })
+      .catch((err: Error) => {
+        setErrorMessage(err.message)
+        setStatus('error')
+      })
+  }, [productId])
+
+  function handleRetry() {
+    setStatus('loading')
+    fetchProduct()
+  }
+
+  useEffect(() => {
+    fetchProduct()
+  }, [fetchProduct])
 
   return (
-    <section>
-      <h1>Product Detail</h1>
-      <p>productId: {productId}</p>
+    <section className="p-6">
+      {status === 'loading' && <LoadingState message="Loading product..." />}
+
+      {status === 'not-found' && <EmptyState message="Product not found." />}
+
+      {status === 'error' && <ErrorState message={errorMessage} onRetry={handleRetry} />}
+
+      {status === 'found' && product && (
+        <>
+          <h1 className="mb-2 text-2xl font-semibold">{product.name}</h1>
+
+          <div className="mb-6 rounded-lg border border-gray-200 p-4">
+            <p className="text-sm text-gray-500">{product.categoryName}</p>
+            <p className="mt-2 text-gray-700">{product.description}</p>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-semibold">Variants</h2>
+            <p className="text-sm text-gray-500">Variant details coming soon.</p>
+          </div>
+        </>
+      )}
     </section>
   )
 }
