@@ -14,6 +14,7 @@ function ProductDetail() {
   const [product, setProduct] = useState<ProductDetailData | undefined>(undefined)
   const [status, setStatus] = useState<Status>('loading')
   const [errorMessage, setErrorMessage] = useState('')
+  const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(undefined)
 
   const fetchProduct = useCallback(() => {
     if (!productId) return
@@ -24,6 +25,7 @@ function ProductDetail() {
         if (result) {
           setProduct(result)
           setStatus('found')
+          setSelectedVariantId(undefined)
         } else {
           setStatus('not-found')
         }
@@ -42,6 +44,8 @@ function ProductDetail() {
   useEffect(() => {
     fetchProduct()
   }, [fetchProduct])
+
+  const selectedVariant = product?.variants.find((variant) => variant.id === selectedVariantId)
 
   return (
     <section className="p-6">
@@ -66,23 +70,40 @@ function ProductDetail() {
               <EmptyState message="This product has no active variants right now." />
             ) : (
               <ul className="flex flex-col gap-2">
-                {product.variants.map((variant) => (
-                  <li
-                    key={variant.id}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
-                  >
-                    <span className="text-sm text-gray-700">{variant.name}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-gray-900">
-                        ${variant.price.toFixed(2)}
-                      </span>
-                      <StockStatusBadge status={variant.stockStatus} />
-                    </div>
-                  </li>
-                ))}
+                {product.variants.map((variant) => {
+                  const isSelected = variant.id === selectedVariantId
+                  const isOutOfStock = variant.stockStatus === 'OUT_OF_STOCK'
+
+                  return (
+                    <li
+                      key={variant.id}
+                      onClick={() => setSelectedVariantId(variant.id)}
+                      className={`flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors ${
+                        isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      } ${isOutOfStock ? 'opacity-60' : ''}`}
+                    >
+                      <span className="text-sm text-gray-700">{variant.name}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-gray-900">
+                          ${variant.price.toFixed(2)}
+                        </span>
+                        <StockStatusBadge status={variant.stockStatus} />
+                      </div>
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>
+
+          {selectedVariant && (
+            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <p className="text-sm text-gray-700">
+                You are about to buy: <strong>{selectedVariant.name}</strong>, $
+                {selectedVariant.price.toFixed(2)}
+              </p>
+            </div>
+          )}
         </>
       )}
     </section>
