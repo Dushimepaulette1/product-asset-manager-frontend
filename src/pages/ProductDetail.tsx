@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { productService } from '../services/productService.ts'
 import { purchaseService } from '../services/purchaseService.ts'
+import type { PurchaseError } from '../services/purchaseService.ts'
 import type { ProductDetail as ProductDetailData } from '../models/types.ts'
 import { getStockStatus } from '../models/types.ts'
 import LoadingState from '../components/LoadingState.tsx'
@@ -24,6 +25,7 @@ function ProductDetail() {
   const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(undefined)
   const [buyStatus, setBuyStatus] = useState<BuyStatus>('idle')
   const [buyErrorMessage, setBuyErrorMessage] = useState('')
+  const [buyErrorReason, setBuyErrorReason] = useState<'NETWORK' | 'STOCK'>('STOCK')
   const [lastPurchase, setLastPurchase] = useState<{ variantName: string; quantity: number } | undefined>(
     undefined,
   )
@@ -86,8 +88,9 @@ function ProductDetail() {
           }
         })
       })
-      .catch((err: Error) => {
+      .catch((err: PurchaseError) => {
         setBuyErrorMessage(err.message)
+        setBuyErrorReason(err.reason)
         setBuyStatus('error')
       })
   }
@@ -163,7 +166,30 @@ function ProductDetail() {
                   </Button>
 
                   {buyStatus === 'error' && (
-                    <p className="mt-2 text-sm text-red-600">{buyErrorMessage}</p>
+                    <div
+                      className={`mt-2 flex items-center justify-between rounded-md p-2 text-sm ${
+                        buyErrorReason === 'NETWORK'
+                          ? 'bg-amber-50 text-amber-700'
+                          : 'bg-red-50 text-red-700'
+                      }`}
+                    >
+                      <span>{buyErrorMessage}</span>
+                      <div className="ml-3 flex items-center gap-3">
+                        {buyErrorReason === 'NETWORK' && (
+                          <button type="button" onClick={handleBuy} className="font-medium underline">
+                            Retry
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setBuyStatus('idle')}
+                          aria-label="Dismiss"
+                          className="font-bold"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
                   )}
 
                   {buyStatus === 'success' && lastPurchase && (
