@@ -61,26 +61,39 @@ function ProductForm({
     onSubmit(values)
   }
 
+  function handleFieldChange(nextValues: ProductFormValues) {
+    onChange(nextValues)
+
+    const stillInvalid = validate(nextValues)
+    setValidationErrors((current) => {
+      const next = { ...current }
+      for (const field of Object.keys(current) as (keyof ProductFormErrors)[]) {
+        if (!stillInvalid[field]) delete next[field]
+      }
+      return next
+    })
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Input
         label="Name"
         value={values.name}
-        onChange={(e) => onChange({ ...values, name: e.target.value })}
+        onChange={(e) => handleFieldChange({ ...values, name: e.target.value })}
         error={fieldErrors.name}
       />
 
       <TextArea
         label="Description"
         value={values.description}
-        onChange={(e) => onChange({ ...values, description: e.target.value })}
+        onChange={(e) => handleFieldChange({ ...values, description: e.target.value })}
         error={fieldErrors.description}
       />
 
       <Select
         label="Category"
         value={values.categoryId}
-        onChange={(e) => onChange({ ...values, categoryId: e.target.value })}
+        onChange={(e) => handleFieldChange({ ...values, categoryId: e.target.value })}
         options={categories.map((category) => ({ label: category.name, value: category.id }))}
         error={fieldErrors.categoryId}
       />
