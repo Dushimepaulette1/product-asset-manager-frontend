@@ -5,6 +5,7 @@ import type { ProductDetail as ProductDetailData } from '../models/types.ts'
 import LoadingState from '../components/LoadingState.tsx'
 import EmptyState from '../components/EmptyState.tsx'
 import ErrorState from '../components/ErrorState.tsx'
+import StockStatusBadge from '../components/StockStatusBadge.tsx'
 
 type Status = 'loading' | 'found' | 'not-found' | 'error'
 
@@ -61,7 +62,26 @@ function ProductDetail() {
 
           <div>
             <h2 className="mb-2 text-lg font-semibold">Variants</h2>
-            <p className="text-sm text-gray-500">Variant details coming soon.</p>
+            {product.variants.length === 0 ? (
+              <EmptyState message="This product has no active variants right now." />
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {product.variants.map((variant) => (
+                  <li
+                    key={variant.id}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
+                  >
+                    <span className="text-sm text-gray-700">{variant.name}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-medium text-gray-900">
+                        ${variant.price.toFixed(2)}
+                      </span>
+                      <StockStatusBadge status={variant.stockStatus} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </>
       )}
