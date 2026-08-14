@@ -26,9 +26,8 @@ function AdminCreateProduct() {
 
   function handleSubmit(formValues: ProductFormValues) {
     const category = categories.find((c) => c.id === formValues.categoryId)
-
-    if (!formValues.name.trim() || !formValues.description.trim() || !category) {
-      setErrorMessage('Please fill out all fields.')
+    if (!category) {
+      setErrorMessage('Selected category could not be found.')
       setSubmitStatus('error')
       return
     }
