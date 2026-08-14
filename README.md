@@ -1,3 +1,16 @@
+# E-Commerce Frontend Capstone
+
+## Demo accounts
+
+Login isn't wired up to real logic yet, but these are the mock accounts the app will use once it is:
+
+| Role | Email | Password |
+|---|---|---|
+| USER | user@example.com | password123 |
+| ADMIN | admin@example.com | admin123 |
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
