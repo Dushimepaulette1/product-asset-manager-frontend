@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { productService } from '../services/productService.ts'
+import { purchaseService } from '../services/purchaseService.ts'
 import type { ProductDetail as ProductDetailData } from '../models/types.ts'
+import { getStockStatus } from '../models/types.ts'
 import LoadingState from '../components/LoadingState.tsx'
 import EmptyState from '../components/EmptyState.tsx'
 import ErrorState from '../components/ErrorState.tsx'
@@ -53,6 +55,38 @@ function ProductDetail() {
   }, [fetchProduct])
 
   const selectedVariant = product?.variants.find((variant) => variant.id === selectedVariantId)
+
+  function handleBuy() {
+    if (!selectedVariant) return
+
+    setBuyStatus('loading')
+    setBuyErrorMessage('')
+
+    purchaseService
+      .buy(selectedVariant.id, 1)
+      .then((confirmation) => {
+        setBuyStatus('success')
+        setProduct((current) => {
+          if (!current) return current
+          return {
+            ...current,
+            variants: current.variants.map((variant) =>
+              variant.id === confirmation.variantId
+                ? {
+                    ...variant,
+                    stockQuantity: confirmation.remainingStock,
+                    stockStatus: getStockStatus(confirmation.remainingStock),
+                  }
+                : variant,
+            ),
+          }
+        })
+      })
+      .catch((err: Error) => {
+        setBuyErrorMessage(err.message)
+        setBuyStatus('error')
+      })
+  }
 
   return (
     <section className="p-6">
@@ -117,7 +151,7 @@ function ProductDetail() {
               {user && (
                 <div className="mt-3">
                   <Button
-                    onClick={() => {}}
+                    onClick={handleBuy}
                     disabled={selectedVariant.stockStatus === 'OUT_OF_STOCK'}
                     loading={buyStatus === 'loading'}
                   >
