@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService.ts'
 import { purchaseService } from '../services/purchaseService.ts'
 import type { PurchaseError } from '../services/purchaseService.ts'
@@ -19,6 +19,7 @@ type BuyStatus = 'idle' | 'loading' | 'success' | 'error'
 function ProductDetail() {
   const { user } = useAuth()
   const { productId } = useParams()
+  const navigate = useNavigate()
   const [product, setProduct] = useState<ProductDetailData | undefined>(undefined)
   const [status, setStatus] = useState<Status>('loading')
   const [errorMessage, setErrorMessage] = useState('')
@@ -154,6 +155,13 @@ function ProductDetail() {
                 You are about to buy: <strong>{selectedVariant.name}</strong>, $
                 {selectedVariant.price.toFixed(2)}
               </p>
+
+              {!user && (
+                <div className="mt-3 rounded-md bg-gray-50 p-3">
+                  <p className="mb-2 text-sm text-gray-600">Log in to buy this item.</p>
+                  <Button onClick={() => navigate('/login')}>Log in to buy</Button>
+                </div>
+              )}
 
               {user && (
                 <div className="mt-3">
