@@ -24,6 +24,9 @@ function ProductDetail() {
   const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(undefined)
   const [buyStatus, setBuyStatus] = useState<BuyStatus>('idle')
   const [buyErrorMessage, setBuyErrorMessage] = useState('')
+  const [lastPurchase, setLastPurchase] = useState<{ variantName: string; quantity: number } | undefined>(
+    undefined,
+  )
 
   const fetchProduct = useCallback(() => {
     if (!productId) return
@@ -66,6 +69,7 @@ function ProductDetail() {
       .buy(selectedVariant.id, 1)
       .then((confirmation) => {
         setBuyStatus('success')
+        setLastPurchase({ variantName: selectedVariant.name, quantity: confirmation.quantity })
         setProduct((current) => {
           if (!current) return current
           return {
@@ -162,8 +166,20 @@ function ProductDetail() {
                     <p className="mt-2 text-sm text-red-600">{buyErrorMessage}</p>
                   )}
 
-                  {buyStatus === 'success' && (
-                    <p className="mt-2 text-sm text-green-600">Purchase successful!</p>
+                  {buyStatus === 'success' && lastPurchase && (
+                    <div className="mt-2 flex items-center justify-between rounded-md bg-green-50 p-2 text-sm text-green-700">
+                      <span>
+                        Purchased {lastPurchase.quantity} × {lastPurchase.variantName} — confirmed!
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setBuyStatus('idle')}
+                        aria-label="Dismiss"
+                        className="ml-3 font-bold"
+                      >
+                        ×
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
