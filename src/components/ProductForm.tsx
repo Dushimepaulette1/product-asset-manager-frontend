@@ -19,6 +19,14 @@ export interface ProductFormErrors {
   categoryId?: string
 }
 
+function validate(values: ProductFormValues): ProductFormErrors {
+  const validationErrors: ProductFormErrors = {}
+  if (!values.name.trim()) validationErrors.name = 'Name is required'
+  if (!values.description.trim()) validationErrors.description = 'Description is required'
+  if (!values.categoryId) validationErrors.categoryId = 'Category is required'
+  return validationErrors
+}
+
 interface ProductFormProps {
   values: ProductFormValues
   onChange: (values: ProductFormValues) => void
@@ -37,13 +45,19 @@ function ProductForm({
   submitting = false,
 }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([])
+  const [validationErrors, setValidationErrors] = useState<ProductFormErrors>({})
 
   useEffect(() => {
     categoryService.find().then(setCategories)
   }, [])
 
+  const fieldErrors: ProductFormErrors = { ...errors, ...validationErrors }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const nextValidationErrors = validate(values)
+    setValidationErrors(nextValidationErrors)
+    if (Object.keys(nextValidationErrors).length > 0) return
     onSubmit(values)
   }
 
@@ -53,14 +67,14 @@ function ProductForm({
         label="Name"
         value={values.name}
         onChange={(e) => onChange({ ...values, name: e.target.value })}
-        error={errors?.name}
+        error={fieldErrors.name}
       />
 
       <TextArea
         label="Description"
         value={values.description}
         onChange={(e) => onChange({ ...values, description: e.target.value })}
-        error={errors?.description}
+        error={fieldErrors.description}
       />
 
       <Select
@@ -68,7 +82,7 @@ function ProductForm({
         value={values.categoryId}
         onChange={(e) => onChange({ ...values, categoryId: e.target.value })}
         options={categories.map((category) => ({ label: category.name, value: category.id }))}
-        error={errors?.categoryId}
+        error={fieldErrors.categoryId}
       />
 
       <Button type="submit" loading={submitting}>
