@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Input from '../components/Input.tsx'
 import Button from '../components/Button.tsx'
+import { useAuth } from '../context/useAuth.ts'
+import { getPostLoginRedirect } from '../routes/postLoginRedirect.ts'
 
 interface LoginFormValues {
   email: string
@@ -13,6 +16,10 @@ interface LoginFormErrors {
   password?: string
 }
 
+interface LoginLocationState {
+  from?: { pathname: string; search: string }
+}
+
 function validate(values: LoginFormValues): LoginFormErrors {
   const errors: LoginFormErrors = {}
   if (!values.email.trim()) errors.email = 'Email is required'
@@ -21,8 +28,14 @@ function validate(values: LoginFormValues): LoginFormErrors {
 }
 
 function Login() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const [values, setValues] = useState<LoginFormValues>({ email: '', password: '' })
   const [validationErrors, setValidationErrors] = useState<LoginFormErrors>({})
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [submitErrorMessage, setSubmitErrorMessage] = useState('')
 
   function handleFieldChange(nextValues: LoginFormValues) {
     setValues(nextValues)
@@ -42,6 +55,21 @@ function Login() {
     const nextValidationErrors = validate(values)
     setValidationErrors(nextValidationErrors)
     if (Object.keys(nextValidationErrors).length > 0) return
+
+    setSubmitStatus('loading')
+    setSubmitErrorMessage('')
+
+    login(values.email, values.password)
+      .then((user) => {
+        const state = location.state as LoginLocationState | null
+        const from = state?.from
+        const destination = from ? `${from.pathname}${from.search}` : getPostLoginRedirect(user.role)
+        navigate(destination, { replace: true })
+      })
+      .catch((err: Error) => {
+        setSubmitErrorMessage(err.message)
+        setSubmitStatus('error')
+      })
   }
 
   return (
@@ -65,7 +93,13 @@ function Login() {
           error={validationErrors.password}
         />
 
-        <Button type="submit">Log In</Button>
+        <Button type="submit" loading={submitStatus === 'loading'}>
+          Log In
+        </Button>
+
+        {submitStatus === 'error' && (
+          <p className="text-sm text-red-600">{submitErrorMessage}</p>
+        )}
       </form>
     </section>
   )
