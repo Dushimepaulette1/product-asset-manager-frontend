@@ -166,7 +166,15 @@ function ProductDetail() {
                 </div>
               )}
 
-              {user && (
+              {user?.role === 'ADMIN' && (
+                <div className="mt-3 rounded-md bg-gray-50 p-3">
+                  <p className="text-sm text-gray-600">
+                    Admins manage products rather than purchase them.
+                  </p>
+                </div>
+              )}
+
+              {user?.role === 'USER' && (
                 <div className="mt-3">
                   <Button
                     onClick={handleBuy}
