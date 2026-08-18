@@ -6,6 +6,7 @@ import Login from '../pages/Login.tsx'
 import NotFound from '../pages/NotFound.tsx'
 import ProtectedRoute from './ProtectedRoute.tsx'
 import AdminProductList from '../pages/admin/AdminProductList.tsx'
+import AdminProductDetail from '../pages/admin/AdminProductDetail.tsx'
 import AdminCreateProduct from '../pages/admin/AdminCreateProduct.tsx'
 import AdminEditProduct from '../pages/admin/AdminEditProduct.tsx'
 
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'products', element: <AdminProductList /> },
           { path: 'products/new', element: <AdminCreateProduct /> },
+          { path: 'products/:productId', element: <AdminProductDetail /> },
           { path: 'products/:productId/edit', element: <AdminEditProduct /> },
         ],
       },
