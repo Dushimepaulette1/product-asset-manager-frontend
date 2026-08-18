@@ -2,7 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { productService } from '../../services/productService.ts'
 import { categoryService } from '../../services/categoryService.ts'
-import type { Category, ProductDetail as ProductDetailData } from '../../models/types.ts'
+import { variantService } from '../../services/variantService.ts'
+import type {
+  Category,
+  ProductDetail as ProductDetailData,
+  VariantWithStockStatus,
+} from '../../models/types.ts'
+import { getStockStatus } from '../../models/types.ts'
 import ProductForm from '../../components/ProductForm.tsx'
 import type { ProductFormValues } from '../../components/ProductForm.tsx'
 import VariantForm from '../../components/VariantForm.tsx'
@@ -35,6 +41,9 @@ function AdminEditProduct() {
 
   const [variantFormMode, setVariantFormMode] = useState<'closed' | 'add' | 'edit'>('closed')
   const [variantFormValues, setVariantFormValues] = useState<VariantFormValues>(EMPTY_VARIANT_VALUES)
+  const [editingVariantId, setEditingVariantId] = useState<string | undefined>(undefined)
+  const [variantSubmitStatus, setVariantSubmitStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [variantSubmitErrorMessage, setVariantSubmitErrorMessage] = useState('')
 
   const fetchProduct = useCallback(() => {
     if (!productId) return
@@ -106,6 +115,65 @@ function AdminEditProduct() {
   function handleAddVariantClick() {
     setVariantFormValues(EMPTY_VARIANT_VALUES)
     setVariantFormMode('add')
+    setVariantSubmitStatus('idle')
+  }
+
+  function handleVariantRowClick(variant: VariantWithStockStatus) {
+    setVariantFormValues({
+      name: variant.name,
+      sku: variant.sku,
+      price: variant.price.toString(),
+      stockQuantity: variant.stockQuantity.toString(),
+    })
+    setEditingVariantId(variant.id)
+    setVariantFormMode('edit')
+    setVariantSubmitStatus('idle')
+  }
+
+  function handleVariantSubmit(formValues: VariantFormValues) {
+    if (!productId) return
+
+    setVariantSubmitStatus('loading')
+    setVariantSubmitErrorMessage('')
+
+    const data = {
+      name: formValues.name,
+      sku: formValues.sku,
+      price: Number(formValues.price),
+      stockQuantity: Number(formValues.stockQuantity),
+      isActive: true,
+    }
+
+    const request =
+      variantFormMode === 'edit' && editingVariantId
+        ? variantService.update(editingVariantId, data)
+        : variantService.create(productId, data)
+
+    request
+      .then((savedVariant) => {
+        if (!savedVariant) return
+
+        const updatedVariant: VariantWithStockStatus = {
+          ...savedVariant,
+          stockStatus: getStockStatus(savedVariant.stockQuantity),
+        }
+
+        setProduct((current) => {
+          if (!current) return current
+          const exists = current.variants.some((v) => v.id === updatedVariant.id)
+          const variants = exists
+            ? current.variants.map((v) => (v.id === updatedVariant.id ? updatedVariant : v))
+            : [...current.variants, updatedVariant]
+          return { ...current, variants }
+        })
+
+        setVariantFormMode('closed')
+        setVariantSubmitStatus('idle')
+      })
+      .catch((err: Error) => {
+        setVariantSubmitErrorMessage(err.message)
+        setVariantSubmitStatus('error')
+      })
   }
 
   return (
@@ -151,10 +219,14 @@ function AdminEditProduct() {
                 <VariantForm
                   values={variantFormValues}
                   onChange={setVariantFormValues}
-                  onSubmit={() => {}}
+                  onSubmit={handleVariantSubmit}
                   onCancel={() => setVariantFormMode('closed')}
+                  submitting={variantSubmitStatus === 'loading'}
                   submitLabel={variantFormMode === 'edit' ? 'Save Variant' : 'Add Variant'}
                 />
+                {variantSubmitStatus === 'error' && (
+                  <p className="mt-2 text-sm text-red-600">{variantSubmitErrorMessage}</p>
+                )}
               </div>
             )}
 
@@ -165,7 +237,8 @@ function AdminEditProduct() {
                 {product.variants.map((variant) => (
                   <li
                     key={variant.id}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
+                    onClick={() => handleVariantRowClick(variant)}
+                    className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 p-3 hover:border-gray-300"
                   >
                     <span className="text-sm text-gray-700">{variant.name}</span>
                     <div className="flex items-center gap-3">
