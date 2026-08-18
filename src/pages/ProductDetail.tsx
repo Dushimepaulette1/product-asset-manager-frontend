@@ -150,7 +150,16 @@ function ProductDetail() {
             )}
           </div>
 
-          {selectedVariant && (
+          {selectedVariant && user?.role === 'ADMIN' && (
+            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm text-gray-600">
+                Selected <strong>{selectedVariant.name}</strong> — ${selectedVariant.price.toFixed(2)}.
+                Manage pricing and stock from the admin product page.
+              </p>
+            </div>
+          )}
+
+          {selectedVariant && user?.role !== 'ADMIN' && (
             <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
               <p className="text-sm text-gray-700">
                 You are about to buy: <strong>{selectedVariant.name}</strong>, $
@@ -163,14 +172,6 @@ function ProductDetail() {
                   <Button onClick={() => navigate('/login', { state: { from: location } })}>
                     Log in to buy
                   </Button>
-                </div>
-              )}
-
-              {user?.role === 'ADMIN' && (
-                <div className="mt-3 rounded-md bg-gray-50 p-3">
-                  <p className="text-sm text-gray-600">
-                    Admins manage products rather than purchase them.
-                  </p>
                 </div>
               )}
 
