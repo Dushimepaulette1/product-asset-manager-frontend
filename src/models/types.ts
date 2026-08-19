@@ -31,6 +31,24 @@ export function getStockStatus(stockQuantity: number): StockStatus {
   return 'IN_STOCK'
 }
 
+export interface VariantWithStockStatus extends Variant {
+  stockStatus: StockStatus
+}
+
+export const stockStatusLabels: Record<StockStatus, string> = {
+  IN_STOCK: 'In Stock',
+  LOW_STOCK: 'Low Stock',
+  OUT_OF_STOCK: 'Out of Stock',
+}
+
+export interface ProductDetail extends Product {
+  variants: VariantWithStockStatus[]
+}
+
+export interface ProductWithStartingPrice extends Product {
+  startingPrice: number | undefined
+}
+
 export type UserRole = 'USER' | 'ADMIN'
 
 export interface User {
@@ -39,4 +57,17 @@ export interface User {
   email: string
   password: string
   role: UserRole
+}
+
+export interface AuthUser {
+  name: string
+  email: string
+  role: UserRole
+}
+
+export interface AuthTokenPayload {
+  sub: string
+  email: string
+  role: UserRole
+  exp: number
 }
