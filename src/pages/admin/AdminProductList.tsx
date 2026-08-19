@@ -60,7 +60,7 @@ function AdminProductList() {
         <DataTable<ProductWithStartingPrice>
           items={products}
           getKey={(product) => product.id}
-          onItemClick={(product) => navigate(`/admin/products/${product.id}/edit`)}
+          onItemClick={(product) => navigate(`/admin/products/${product.id}`)}
           columns={[
             { header: 'Name', render: (product) => product.name },
             { header: 'Category', render: (product) => product.categoryName },

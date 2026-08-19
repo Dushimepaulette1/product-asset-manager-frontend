@@ -150,7 +150,16 @@ function ProductDetail() {
             )}
           </div>
 
-          {selectedVariant && (
+          {selectedVariant && user?.role === 'ADMIN' && (
+            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm text-gray-600">
+                Selected <strong>{selectedVariant.name}</strong> — ${selectedVariant.price.toFixed(2)}.
+                Manage pricing and stock from the admin product page.
+              </p>
+            </div>
+          )}
+
+          {selectedVariant && user?.role !== 'ADMIN' && (
             <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
               <p className="text-sm text-gray-700">
                 You are about to buy: <strong>{selectedVariant.name}</strong>, $
@@ -166,7 +175,7 @@ function ProductDetail() {
                 </div>
               )}
 
-              {user && (
+              {user?.role === 'USER' && (
                 <div className="mt-3">
                   <Button
                     onClick={handleBuy}
