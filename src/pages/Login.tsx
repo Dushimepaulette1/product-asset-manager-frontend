@@ -73,10 +73,14 @@ function Login() {
   }
 
   return (
-    <section className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Login</h1>
+    <section className="mx-auto max-w-sm px-6 py-16">
+      <p className="text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Welcome back</p>
+      <h1 className="mt-2 mb-8 font-display text-3xl font-semibold tracking-tight text-zinc-900">Login</h1>
 
-      <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white/70 p-6"
+      >
         <Input
           label="Email"
           type="email"
