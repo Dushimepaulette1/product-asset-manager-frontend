@@ -16,9 +16,14 @@ function AdminProductList() {
   const { data: products = [], status, errorMessage, retry } = useAsync(fetchProducts)
 
   return (
-    <section className="p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Admin Product List</h1>
+    <section className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mb-8 flex items-end justify-between">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Admin</p>
+          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight text-zinc-900">
+            Product List
+          </h1>
+        </div>
         <Button onClick={() => navigate('/admin/products/new')}>Create Product</Button>
       </div>
 

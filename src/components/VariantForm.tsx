@@ -80,7 +80,10 @@ function VariantForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white/70 p-5"
+    >
       <Input
         label="Name"
         value={values.name}
