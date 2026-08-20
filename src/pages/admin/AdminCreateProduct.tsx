@@ -15,6 +15,7 @@ function AdminCreateProduct() {
     name: '',
     description: '',
     categoryId: '',
+    imageUrl: '',
   })
   const [categories, setCategories] = useState<Category[]>([])
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
@@ -41,6 +42,7 @@ function AdminCreateProduct() {
         description: formValues.description,
         categoryId: category.id,
         categoryName: category.name,
+        imageUrl: formValues.imageUrl.trim() || undefined,
       })
       .then((created) => {
         navigate(`/admin/products/${created.id}/edit`)
@@ -52,8 +54,11 @@ function AdminCreateProduct() {
   }
 
   return (
-    <section className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Create Product</h1>
+    <section className="mx-auto max-w-2xl px-6 py-10">
+      <p className="text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Admin</p>
+      <h1 className="mt-2 mb-8 font-display text-3xl font-semibold tracking-tight text-zinc-900">
+        Create Product
+      </h1>
 
       <ProductForm
         values={values}
