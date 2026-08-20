@@ -4,8 +4,8 @@ interface LoadingStateProps {
 
 function LoadingState({ message = 'Loading...' }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12 text-gray-500">
-      <span className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500" />
+    <div className="flex flex-col items-center justify-center gap-3 py-16 text-zinc-500">
+      <span className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-900" />
       <p className="text-sm">{message}</p>
     </div>
   )
