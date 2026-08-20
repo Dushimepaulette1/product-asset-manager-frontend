@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <path id="ring-a" d="M0,-180 C90,-170 170,-120 190,-40 C210,40 180,120 110,165 C40,210 -60,205 -130,155 C-200,105 -230,20 -200,-60 C-170,-140 -90,-190 0,-180 Z" />
+    <path id="ring-b" d="M0,-140 C70,-135 130,-95 150,-30 C170,35 145,100 85,135 C25,170 -55,165 -110,120 C-165,75 -185,5 -160,-55 C-135,-115 -70,-145 0,-140 Z" />
+  </defs>
+  <g fill="none" stroke="#0f172a" stroke-width="1.4">
+    <g opacity="0.05" transform="translate(300,260)">
+      <use href="#ring-a" transform="scale(1.9)" />
+      <use href="#ring-a" transform="scale(1.55)" />
+      <use href="#ring-a" transform="scale(1.2)" />
+      <use href="#ring-a" transform="scale(0.9)" />
+      <use href="#ring-a" transform="scale(0.6)" />
+      <use href="#ring-a" transform="scale(0.32)" />
+    </g>
+    <g opacity="0.05" transform="translate(1250,860)">
+      <use href="#ring-b" transform="scale(2.1)" />
+      <use href="#ring-b" transform="scale(1.7)" />
+      <use href="#ring-b" transform="scale(1.35)" />
+      <use href="#ring-b" transform="scale(1.0)" />
+      <use href="#ring-b" transform="scale(0.68)" />
+      <use href="#ring-b" transform="scale(0.4)" />
+    </g>
+    <g opacity="0.035" transform="translate(1000,120) rotate(15)">
+      <use href="#ring-a" transform="scale(1.1)" />
+      <use href="#ring-a" transform="scale(0.75)" />
+      <use href="#ring-a" transform="scale(0.45)" />
+    </g>
+  </g>
+</svg>
