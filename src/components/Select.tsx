@@ -9,9 +9,10 @@ interface SelectOption {
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string
   options: SelectOption[]
+  error?: string
 }
 
-function Select({ label, options, id, className = '', ...rest }: SelectProps) {
+function Select({ label, options, error, id, className = '', ...rest }: SelectProps) {
   const generatedId = useId()
   const selectId = id ?? generatedId
 
@@ -22,7 +23,7 @@ function Select({ label, options, id, className = '', ...rest }: SelectProps) {
       </label>
       <select
         id={selectId}
-        className={`rounded-md border border-gray-300 px-3 py-2 ${className}`}
+        className={`rounded-md border px-3 py-2 ${error ? 'border-red-500' : 'border-gray-300'} ${className}`}
         {...rest}
       >
         {options.map((option) => (
@@ -31,6 +32,7 @@ function Select({ label, options, id, className = '', ...rest }: SelectProps) {
           </option>
         ))}
       </select>
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   )
 }
