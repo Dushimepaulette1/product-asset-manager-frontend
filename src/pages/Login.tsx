@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Input from '../components/Input.tsx'
-import Button from '../components/Button.tsx'
+import Input from '../components/shared/Input.tsx'
+import Button from '../components/shared/Button.tsx'
 import { useAuth } from '../context/useAuth.ts'
 import { getPostLoginRedirect } from '../routes/postLoginRedirect.ts'
 

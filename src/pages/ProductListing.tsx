@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService.ts'
-import LoadingState from '../components/LoadingState.tsx'
-import EmptyState from '../components/EmptyState.tsx'
-import ErrorState from '../components/ErrorState.tsx'
-import SearchBar from '../components/SearchBar.tsx'
-import MaxPriceFilter from '../components/MaxPriceFilter.tsx'
-import ProductCard from '../components/ProductCard.tsx'
+import LoadingState from '../components/shared/LoadingState.tsx'
+import EmptyState from '../components/shared/EmptyState.tsx'
+import ErrorState from '../components/shared/ErrorState.tsx'
+import SearchBar from '../components/shared/SearchBar.tsx'
+import MaxPriceFilter from '../components/shared/MaxPriceFilter.tsx'
+import ProductCard from '../components/shared/ProductCard.tsx'
 import { useAsync } from '../hooks/useAsync.ts'
 
 function ProductListing() {

@@ -1,4 +1,4 @@
-import type { ProductWithStartingPrice } from '../models/types.ts'
+import type { ProductWithStartingPrice } from '../../models/types.ts'
 import ProductImage from './ProductImage.tsx'
 
 interface ProductCardProps {

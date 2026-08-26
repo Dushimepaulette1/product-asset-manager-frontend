@@ -4,7 +4,7 @@ import Input from './Input.tsx'
 import TextArea from './TextArea.tsx'
 import Select from './Select.tsx'
 import Button from './Button.tsx'
-import type { Category } from '../models/types.ts'
+import type { Category } from '../../models/types.ts'
 
 export interface ProductFormValues {
   name: string

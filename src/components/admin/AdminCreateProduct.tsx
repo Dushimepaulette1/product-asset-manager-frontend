@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { productService } from '../../services/productService.ts'
 import { categoryService } from '../../services/categoryService.ts'
 import type { Category } from '../../models/types.ts'
-import ProductForm from '../../components/ProductForm.tsx'
-import type { ProductFormValues } from '../../components/ProductForm.tsx'
-import Button from '../../components/Button.tsx'
+import ProductForm from '../shared/ProductForm.tsx'
+import type { ProductFormValues } from '../shared/ProductForm.tsx'
+import Button from '../shared/Button.tsx'
 
 type SubmitStatus = 'idle' | 'loading' | 'error'
 

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth.ts'
-import Badge from './Badge.tsx'
+import Badge from './shared/Badge.tsx'
 
 function Navbar() {
   const { user, logout } = useAuth()
