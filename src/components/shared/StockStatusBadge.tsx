@@ -1,6 +1,6 @@
 import Badge from './Badge.tsx'
-import { stockStatusLabels } from '../models/types.ts'
-import type { StockStatus } from '../models/types.ts'
+import { stockStatusLabels } from '../../models/types.ts'
+import type { StockStatus } from '../../models/types.ts'
 
 const stockStatusColors: Record<StockStatus, 'green' | 'yellow' | 'red'> = {
   IN_STOCK: 'green',
