@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import Input from './Input.tsx'
 import TextArea from './TextArea.tsx'
 import Select from './Select.tsx'
 import Button from './Button.tsx'
-import { categoryService } from '../services/categoryService.ts'
 import type { Category } from '../models/types.ts'
 
 export interface ProductFormValues {
@@ -31,6 +30,7 @@ interface ProductFormProps {
   values: ProductFormValues
   onChange: (values: ProductFormValues) => void
   onSubmit: (values: ProductFormValues) => void
+  categories: Category[]
   errors?: ProductFormErrors
   submitLabel?: string
   submitting?: boolean
@@ -40,16 +40,12 @@ function ProductForm({
   values,
   onChange,
   onSubmit,
+  categories,
   errors,
   submitLabel = 'Save',
   submitting = false,
 }: ProductFormProps) {
-  const [categories, setCategories] = useState<Category[]>([])
   const [validationErrors, setValidationErrors] = useState<ProductFormErrors>({})
-
-  useEffect(() => {
-    categoryService.find().then(setCategories)
-  }, [])
 
   const fieldErrors: ProductFormErrors = { ...errors, ...validationErrors }
 

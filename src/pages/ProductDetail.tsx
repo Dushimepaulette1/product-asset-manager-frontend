@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { productService } from '../services/productService.ts'
 import { purchaseService } from '../services/purchaseService.ts'
 import type { PurchaseError } from '../services/purchaseService.ts'
-import type { ProductDetail as ProductDetailData } from '../models/types.ts'
 import { getStockStatus } from '../models/types.ts'
 import LoadingState from '../components/LoadingState.tsx'
 import EmptyState from '../components/EmptyState.tsx'
@@ -11,8 +10,7 @@ import ErrorState from '../components/ErrorState.tsx'
 import StockStatusBadge from '../components/StockStatusBadge.tsx'
 import Button from '../components/Button.tsx'
 import { useAuth } from '../context/useAuth.ts'
-
-type Status = 'loading' | 'found' | 'not-found' | 'error'
+import { useAsync } from '../hooks/useAsync.ts'
 
 type BuyStatus = 'idle' | 'loading' | 'success' | 'error'
 
@@ -21,9 +19,6 @@ function ProductDetail() {
   const { productId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
-  const [product, setProduct] = useState<ProductDetailData | undefined>(undefined)
-  const [status, setStatus] = useState<Status>('loading')
-  const [errorMessage, setErrorMessage] = useState('')
   const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(undefined)
   const [buyStatus, setBuyStatus] = useState<BuyStatus>('idle')
   const [buyErrorMessage, setBuyErrorMessage] = useState('')
@@ -33,33 +28,15 @@ function ProductDetail() {
   )
 
   const fetchProduct = useCallback(() => {
-    if (!productId) return
+    if (!productId) return Promise.resolve(undefined)
 
-    productService
-      .findById(productId)
-      .then((result) => {
-        if (result) {
-          setProduct(result)
-          setStatus('found')
-          setSelectedVariantId(undefined)
-        } else {
-          setStatus('not-found')
-        }
-      })
-      .catch((err: Error) => {
-        setErrorMessage(err.message)
-        setStatus('error')
-      })
+    return productService.findById(productId).then((result) => {
+      setSelectedVariantId(undefined)
+      return result
+    })
   }, [productId])
 
-  function handleRetry() {
-    setStatus('loading')
-    fetchProduct()
-  }
-
-  useEffect(() => {
-    fetchProduct()
-  }, [fetchProduct])
+  const { data: product, setData: setProduct, status, errorMessage, retry } = useAsync(fetchProduct)
 
   const selectedVariant = product?.variants.find((variant) => variant.id === selectedVariantId)
 
@@ -101,11 +78,11 @@ function ProductDetail() {
     <section className="p-6">
       {status === 'loading' && <LoadingState message="Loading product..." />}
 
-      {status === 'not-found' && <EmptyState message="Product not found." />}
+      {status === 'success' && !product && <EmptyState message="Product not found." />}
 
-      {status === 'error' && <ErrorState message={errorMessage} onRetry={handleRetry} />}
+      {status === 'error' && <ErrorState message={errorMessage} onRetry={retry} />}
 
-      {status === 'found' && product && (
+      {status === 'success' && product && (
         <>
           <h1 className="mb-2 text-2xl font-semibold">{product.name}</h1>
 

@@ -190,6 +190,7 @@ function AdminEditProduct() {
             values={values}
             onChange={setValues}
             onSubmit={handleSubmit}
+            categories={categories}
             submitting={submitStatus === 'loading'}
             submitLabel="Save Changes"
           />

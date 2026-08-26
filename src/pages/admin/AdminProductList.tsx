@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { productService } from '../../services/productService.ts'
 import type { ProductWithStartingPrice } from '../../models/types.ts'
@@ -7,36 +7,13 @@ import LoadingState from '../../components/LoadingState.tsx'
 import EmptyState from '../../components/EmptyState.tsx'
 import ErrorState from '../../components/ErrorState.tsx'
 import Button from '../../components/Button.tsx'
-
-type Status = 'loading' | 'success' | 'error'
+import { useAsync } from '../../hooks/useAsync.ts'
 
 function AdminProductList() {
   const navigate = useNavigate()
-  const [products, setProducts] = useState<ProductWithStartingPrice[]>([])
-  const [status, setStatus] = useState<Status>('loading')
-  const [errorMessage, setErrorMessage] = useState('')
 
-  function fetchProducts() {
-    return productService
-      .find()
-      .then((results) => {
-        setProducts(results)
-        setStatus('success')
-      })
-      .catch((err: Error) => {
-        setErrorMessage(err.message)
-        setStatus('error')
-      })
-  }
-
-  function handleRetry() {
-    setStatus('loading')
-    fetchProducts()
-  }
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
+  const fetchProducts = useCallback(() => productService.find(), [])
+  const { data: products = [], status, errorMessage, retry } = useAsync(fetchProducts)
 
   return (
     <section className="p-6">
@@ -47,7 +24,7 @@ function AdminProductList() {
 
       {status === 'loading' && <LoadingState message="Loading products..." />}
 
-      {status === 'error' && <ErrorState message={errorMessage} onRetry={handleRetry} />}
+      {status === 'error' && <ErrorState message={errorMessage} onRetry={retry} />}
 
       {status === 'success' && products.length === 0 && (
         <EmptyState
