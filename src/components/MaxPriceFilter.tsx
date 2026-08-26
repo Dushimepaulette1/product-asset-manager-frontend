@@ -30,7 +30,7 @@ function MaxPriceFilter({ value, onChange }: MaxPriceFilterProps) {
         <button
           type="button"
           onClick={() => onChange(undefined)}
-          className="pb-2 text-sm text-gray-500 hover:text-gray-700"
+          className="pb-2 text-sm text-zinc-500 hover:text-zinc-800"
         >
           Clear
         </button>

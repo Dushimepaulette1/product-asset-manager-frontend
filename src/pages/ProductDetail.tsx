@@ -8,6 +8,7 @@ import LoadingState from '../components/LoadingState.tsx'
 import EmptyState from '../components/EmptyState.tsx'
 import ErrorState from '../components/ErrorState.tsx'
 import StockStatusBadge from '../components/StockStatusBadge.tsx'
+import ProductImage from '../components/ProductImage.tsx'
 import Button from '../components/Button.tsx'
 import { useAuth } from '../context/useAuth.ts'
 import { useAsync } from '../hooks/useAsync.ts'
@@ -75,7 +76,7 @@ function ProductDetail() {
   }
 
   return (
-    <section className="p-6">
+    <section className="mx-auto max-w-5xl px-6 py-10">
       {status === 'loading' && <LoadingState message="Loading product..." />}
 
       {status === 'success' && !product && <EmptyState message="Product not found." />}
@@ -83,16 +84,25 @@ function ProductDetail() {
       {status === 'error' && <ErrorState message={errorMessage} onRetry={retry} />}
 
       {status === 'success' && product && (
-        <>
-          <h1 className="mb-2 text-2xl font-semibold">{product.name}</h1>
-
-          <div className="mb-6 rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-500">{product.categoryName}</p>
-            <p className="mt-2 text-gray-700">{product.description}</p>
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div className="aspect-square overflow-hidden rounded-3xl border border-zinc-200">
+            <ProductImage imageUrl={product.imageUrl} name={product.name} className="h-full w-full" />
           </div>
 
           <div>
-            <h2 className="mb-2 text-lg font-semibold">Variants</h2>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-zinc-900">
+            {product.name}
+          </h1>
+
+          <div className="mt-6 mb-8 rounded-2xl border border-zinc-200 bg-white/70 p-5">
+            <p className="text-xs font-semibold tracking-wide text-zinc-400 uppercase">
+              {product.categoryName}
+            </p>
+            <p className="mt-2 text-zinc-700">{product.description}</p>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-semibold text-zinc-900">Variants</h2>
             {product.variants.length === 0 ? (
               <EmptyState message="This product has no active variants right now." />
             ) : (
@@ -109,13 +119,13 @@ function ProductDetail() {
                         setBuyStatus('idle')
                         setBuyErrorMessage('')
                       }}
-                      className={`flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors ${
-                        isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-colors ${
+                        isSelected ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200 hover:border-zinc-300'
                       } ${isOutOfStock ? 'opacity-60' : ''}`}
                     >
-                      <span className="text-sm text-gray-700">{variant.name}</span>
+                      <span className="text-sm text-zinc-700">{variant.name}</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-zinc-900">
                           ${variant.price.toFixed(2)}
                         </span>
                         <StockStatusBadge status={variant.stockStatus} />
@@ -128,8 +138,8 @@ function ProductDetail() {
           </div>
 
           {selectedVariant && user?.role === 'ADMIN' && (
-            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <p className="text-sm text-gray-600">
+            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white/70 p-5">
+              <p className="text-sm text-zinc-600">
                 Selected <strong>{selectedVariant.name}</strong> — ${selectedVariant.price.toFixed(2)}.
                 Manage pricing and stock from the admin product page.
               </p>
@@ -137,15 +147,15 @@ function ProductDetail() {
           )}
 
           {selectedVariant && user?.role !== 'ADMIN' && (
-            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm text-gray-700">
+            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white/70 p-5">
+              <p className="text-sm text-zinc-700">
                 You are about to buy: <strong>{selectedVariant.name}</strong>, $
                 {selectedVariant.price.toFixed(2)}
               </p>
 
               {!user && (
-                <div className="mt-3 rounded-md bg-gray-50 p-3">
-                  <p className="mb-2 text-sm text-gray-600">Log in to buy this item.</p>
+                <div className="mt-3 rounded-xl bg-zinc-50 p-3">
+                  <p className="mb-2 text-sm text-zinc-600">Log in to buy this item.</p>
                   <Button onClick={() => navigate('/login', { state: { from: location } })}>
                     Log in to buy
                   </Button>
@@ -164,7 +174,7 @@ function ProductDetail() {
 
                   {buyStatus === 'error' && (
                     <div
-                      className={`mt-2 flex items-center justify-between rounded-md p-2 text-sm ${
+                      className={`mt-2 flex items-center justify-between rounded-xl p-3 text-sm ${
                         buyErrorReason === 'NETWORK'
                           ? 'bg-amber-50 text-amber-700'
                           : 'bg-red-50 text-red-700'
@@ -190,7 +200,7 @@ function ProductDetail() {
                   )}
 
                   {buyStatus === 'success' && lastPurchase && (
-                    <div className="mt-2 flex items-center justify-between rounded-md bg-green-50 p-2 text-sm text-green-700">
+                    <div className="mt-2 flex items-center justify-between rounded-xl bg-green-50 p-3 text-sm text-green-700">
                       <span>
                         Purchased {lastPurchase.quantity} × {lastPurchase.variantName} — confirmed!
                       </span>
@@ -208,7 +218,8 @@ function ProductDetail() {
               )}
             </div>
           )}
-        </>
+          </div>
+        </div>
       )}
     </section>
   )

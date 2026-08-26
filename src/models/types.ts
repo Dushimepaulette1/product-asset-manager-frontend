@@ -9,6 +9,7 @@ export interface Product {
   description: string
   categoryId: string
   categoryName: string
+  imageUrl?: string
   createdAt: string
   updatedAt: string
 }

@@ -32,6 +32,7 @@ function AdminEditProduct() {
     name: '',
     description: '',
     categoryId: '',
+    imageUrl: '',
   })
   const [categories, setCategories] = useState<Category[]>([])
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('loading')
@@ -57,6 +58,7 @@ function AdminEditProduct() {
             name: result.name,
             description: result.description,
             categoryId: result.categoryId,
+            imageUrl: result.imageUrl ?? '',
           })
           setLoadStatus('found')
         } else {
@@ -102,6 +104,7 @@ function AdminEditProduct() {
         description: formValues.description,
         categoryId: category.id,
         categoryName: category.name,
+        imageUrl: formValues.imageUrl.trim() || undefined,
       })
       .then(() => {
         setSubmitStatus('success')
@@ -177,8 +180,11 @@ function AdminEditProduct() {
   }
 
   return (
-    <section className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Edit Product</h1>
+    <section className="mx-auto max-w-2xl px-6 py-10">
+      <p className="text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Admin</p>
+      <h1 className="mt-2 mb-8 font-display text-3xl font-semibold tracking-tight text-zinc-900">
+        Edit Product
+      </h1>
 
       {loadStatus === 'loading' && <LoadingState message="Loading product..." />}
 
@@ -209,9 +215,9 @@ function AdminEditProduct() {
             </Button>
           </div>
 
-          <div className="mt-8">
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Variants</h2>
+          <div className="mt-10">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-zinc-900">Variants</h2>
               <Button onClick={handleAddVariantClick}>Add Variant</Button>
             </div>
 
@@ -239,14 +245,14 @@ function AdminEditProduct() {
                   <li
                     key={variant.id}
                     onClick={() => handleVariantRowClick(variant)}
-                    className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 p-3 hover:border-gray-300"
+                    className="flex cursor-pointer items-center justify-between rounded-xl border border-zinc-200 p-4 transition-colors hover:border-zinc-300"
                   >
-                    <span className="text-sm text-gray-700">{variant.name}</span>
+                    <span className="text-sm text-zinc-700">{variant.name}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-zinc-900">
                         ${variant.price.toFixed(2)}
                       </span>
-                      <span className="text-sm text-gray-500">Qty: {variant.stockQuantity}</span>
+                      <span className="text-sm text-zinc-500">Qty: {variant.stockQuantity}</span>
                       <StockStatusBadge status={variant.stockStatus} />
                     </div>
                   </li>

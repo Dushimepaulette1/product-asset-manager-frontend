@@ -10,6 +10,7 @@ export interface ProductFormValues {
   name: string
   description: string
   categoryId: string
+  imageUrl: string
 }
 
 export interface ProductFormErrors {
@@ -71,7 +72,10 @@ function ProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white/70 p-6"
+    >
       <Input
         label="Name"
         value={values.name}
@@ -92,6 +96,14 @@ function ProductForm({
         onChange={(e) => handleFieldChange({ ...values, categoryId: e.target.value })}
         options={categories.map((category) => ({ label: category.name, value: category.id }))}
         error={fieldErrors.categoryId}
+      />
+
+      <Input
+        label="Image URL (optional)"
+        type="url"
+        placeholder="https://..."
+        value={values.imageUrl}
+        onChange={(e) => handleFieldChange({ ...values, imageUrl: e.target.value })}
       />
 
       <Button type="submit" loading={submitting}>

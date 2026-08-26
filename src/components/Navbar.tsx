@@ -12,22 +12,25 @@ function Navbar() {
   }
 
   return (
-    <nav className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-      <NavLink to="/" end className="font-semibold text-gray-900">
-        Product Listing
+    <nav className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white/70 px-6 py-4 backdrop-blur-md">
+      <NavLink to="/" end className="font-display text-lg font-semibold tracking-tight text-zinc-900">
+        Shop
       </NavLink>
 
-      <ul className="flex items-center gap-4">
+      <ul className="flex items-center gap-5">
         {user ? (
           <>
             {user.role === 'ADMIN' && (
               <li>
-                <NavLink to="/admin/products" className="text-sm text-gray-600 hover:text-gray-900">
+                <NavLink
+                  to="/admin/products"
+                  className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900"
+                >
                   Admin Product Management
                 </NavLink>
               </li>
             )}
-            <li className="flex items-center gap-2 text-sm text-gray-700">
+            <li className="flex items-center gap-2 text-sm text-zinc-700">
               {user.name}
               <Badge label={user.role} color={user.role === 'ADMIN' ? 'purple' : 'blue'} />
             </li>
@@ -35,7 +38,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
               >
                 Logout
               </button>
@@ -43,7 +46,10 @@ function Navbar() {
           </>
         ) : (
           <li>
-            <NavLink to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <NavLink
+              to="/login"
+              className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+            >
               Login
             </NavLink>
           </li>
